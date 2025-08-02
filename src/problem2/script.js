@@ -28,6 +28,63 @@ const state = {
 // DOM element cache
 const elements = {};
 
+// Expose functions to global scope immediately (will be defined later)
+window.openTokenSelector = function (type) {
+  if (typeof openTokenSelector === 'function') {
+    return openTokenSelector(type);
+  }
+  console.warn('openTokenSelector not yet available');
+};
+
+window.closeTokenSelector = function () {
+  if (typeof closeTokenSelector === 'function') {
+    return closeTokenSelector();
+  }
+  console.warn('closeTokenSelector not yet available');
+};
+
+window.selectToken = function (symbol, type) {
+  if (typeof selectToken === 'function') {
+    return selectToken(symbol, type);
+  }
+  console.warn('selectToken not yet available');
+};
+
+window.setMaxAmount = function (type) {
+  if (typeof setMaxAmount === 'function') {
+    return setMaxAmount(type);
+  }
+  console.warn('setMaxAmount not yet available');
+};
+
+window.setHalfAmount = function (type) {
+  if (typeof setHalfAmount === 'function') {
+    return setHalfAmount(type);
+  }
+  console.warn('setHalfAmount not yet available');
+};
+
+window.handleSwap = function (event) {
+  if (typeof handleSwap === 'function') {
+    return handleSwap(event);
+  }
+  console.warn('handleSwap not yet available');
+};
+
+window.filterTokens = function () {
+  if (typeof filterTokens === 'function') {
+    return filterTokens();
+  }
+  console.warn('filterTokens not yet available');
+};
+
+window.swapTokens = function () {
+  if (typeof swapTokens === 'function') {
+    return swapTokens();
+  }
+  console.warn('swapTokens not yet available');
+};
+
 // Debounce utility
 function debounce(func, wait) {
   let timeout;
@@ -252,8 +309,8 @@ function setupEventListeners() {
   // Debounced input handler for better performance
   const debouncedInputHandler = debounce(handleFromAmountChange, 150);
 
-  elements.fromAmountInput?.addEventListener('input', debouncedInputHandler);
-  elements.fromAmountInput?.addEventListener('blur', validateFromAmount);
+  elements.fromAmount?.addEventListener('input', debouncedInputHandler);
+  elements.fromAmount?.addEventListener('blur', validateFromAmount);
 
   // Modal event listeners
   elements.tokenModal?.addEventListener('click', e => {
@@ -287,15 +344,15 @@ const calculateToAmount = memoize((fromAmount, fromToken, toToken) => {
 });
 
 function handleFromAmountChange() {
-  const amount = parseFloat(elements.fromAmountInput?.value) || 0;
+  const amount = parseFloat(elements.fromAmount?.value) || 0;
   const toAmount = calculateToAmount(
     amount,
     state.selectedFromToken,
     state.selectedToToken
   );
 
-  if (elements.toAmountInput) {
-    elements.toAmountInput.value = toAmount.toFixed(CONSTANTS.DECIMAL_PLACES);
+  if (elements.toAmount) {
+    elements.toAmount.value = toAmount.toFixed(CONSTANTS.DECIMAL_PLACES);
   }
 
   updateSwapButton();
@@ -322,7 +379,7 @@ function updateExchangeRate() {
 }
 
 function updateSwapButton() {
-  const amount = parseFloat(elements.fromAmountInput?.value) || 0;
+  const amount = parseFloat(elements.fromAmount?.value) || 0;
   const balance = state.userBalances[state.selectedFromToken] || 0;
 
   let isDisabled = true;
@@ -349,7 +406,7 @@ function updateSwapButton() {
 }
 
 function validateFromAmount() {
-  const amount = parseFloat(elements.fromAmountInput?.value) || 0;
+  const amount = parseFloat(elements.fromAmount?.value) || 0;
   const balance = state.userBalances[state.selectedFromToken] || 0;
 
   if (amount > balance) {
@@ -357,7 +414,7 @@ function validateFromAmount() {
       `Insufficient balance. You have ${balance.toFixed(CONSTANTS.DECIMAL_PLACES)} ${state.selectedFromToken}`,
       'from'
     );
-  } else if (amount <= 0 && elements.fromAmountInput?.value) {
+  } else if (amount <= 0 && elements.fromAmount?.value) {
     showError('Amount must be greater than 0', 'from');
   }
 }
@@ -380,6 +437,12 @@ function showError(message, field = 'general') {
 // Token selection functions
 function openTokenSelector(type) {
   if (!elements.tokenModal) return;
+
+  // Clear any errors
+  clearErrors();
+
+  // Update UI to reflect cleared values
+  updateSwapButton();
 
   elements.tokenModal.classList.add('active');
   elements.tokenModal.dataset.type = type;
@@ -463,13 +526,18 @@ function selectToken(symbol, type) {
     state.selectedToToken = symbol;
   }
 
-  updateUI();
-
-  // Recalculate amount if there's a value
-  const amount = parseFloat(elements.fromAmountInput?.value) || 0;
-  if (amount > 0) {
-    handleFromAmountChange();
+  // Reset input values when a token is selected
+  if (elements.fromAmount) {
+    elements.fromAmount.value = '';
   }
+  if (elements.toAmount) {
+    elements.toAmount.value = '';
+  }
+
+  // Clear any errors
+  clearErrors();
+
+  updateUI();
 
   closeTokenSelector();
 }
@@ -516,20 +584,18 @@ function updateBalances() {
 
 // Utility functions
 function setMaxAmount(type) {
-  if (type === 'from' && elements.fromAmountInput) {
+  if (type === 'from' && elements.fromAmount) {
     const balance = state.userBalances[state.selectedFromToken] || 0;
-    elements.fromAmountInput.value = balance.toFixed(CONSTANTS.DECIMAL_PLACES);
+    elements.fromAmount.value = balance.toFixed(CONSTANTS.DECIMAL_PLACES);
     handleFromAmountChange();
   }
 }
 
 function setHalfAmount(type) {
-  if (type === 'from' && elements.fromAmountInput) {
+  if (type === 'from' && elements.fromAmount) {
     const balance = state.userBalances[state.selectedFromToken] || 0;
     const halfBalance = balance / 2;
-    elements.fromAmountInput.value = halfBalance.toFixed(
-      CONSTANTS.DECIMAL_PLACES
-    );
+    elements.fromAmount.value = halfBalance.toFixed(CONSTANTS.DECIMAL_PLACES);
     handleFromAmountChange();
   }
 }
@@ -542,10 +608,10 @@ function swapTokens() {
   ];
 
   // Swap amounts
-  if (elements.fromAmountInput && elements.toAmountInput) {
-    [elements.fromAmountInput.value, elements.toAmountInput.value] = [
-      elements.toAmountInput.value,
-      elements.fromAmountInput.value,
+  if (elements.fromAmount && elements.toAmount) {
+    [elements.fromAmount.value, elements.toAmount.value] = [
+      elements.toAmount.value,
+      elements.fromAmount.value,
     ];
   }
 
@@ -571,8 +637,8 @@ function showLoading(show) {
 function handleSwap(event) {
   event.preventDefault();
 
-  const fromAmount = parseFloat(elements.fromAmountInput?.value);
-  const toAmount = parseFloat(elements.toAmountInput?.value);
+  const fromAmount = parseFloat(elements.fromAmount?.value);
+  const toAmount = parseFloat(elements.toAmount?.value);
   const balance = state.userBalances[state.selectedFromToken] || 0;
 
   // Validation
@@ -603,8 +669,8 @@ function handleSwap(event) {
     state.userBalances[state.selectedToToken] += toAmount;
 
     // Clear form
-    if (elements.fromAmountInput) elements.fromAmountInput.value = '';
-    if (elements.toAmountInput) elements.toAmountInput.value = '';
+    if (elements.fromAmount) elements.fromAmount.value = '';
+    if (elements.toAmount) elements.toAmount.value = '';
 
     // Update UI
     updateUI();
