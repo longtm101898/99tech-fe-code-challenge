@@ -1,0 +1,38 @@
+{
+  "name": "currency-swap-form",
+  "version": "1.0.0",
+  "description": "A modern, responsive currency swap interface built with vanilla JavaScript",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .js",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.0",
+    "terser": "^5.24.0"
+  },
+  "keywords": [
+    "currency",
+    "swap",
+    "cryptocurrency",
+    "defi",
+    "javascript",
+    "vite",
+    "switcheo"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/currency-swap-form.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/currency-swap-form/issues"
+  },
+  "homepage": "https://github.com/yourusername/currency-swap-form#readme"
+}
