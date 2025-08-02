@@ -6,7 +6,7 @@ A modern, responsive currency swap interface built with vanilla JavaScript, HTML
 
 ## 🌐 Live Demo
 
-**🔗 [View Live Application](https://currency-swap-form-blqtsyvy0-longtran1810s-projects.vercel.app)**
+**🔗 [View Live Application](https://currency-swap-form-red.vercel.app/)**
 
 _Experience the full currency swap functionality with real-time pricing and modern UI_
 
@@ -103,7 +103,7 @@ npm run dev
 
 This application is **live and deployed** on Vercel:
 
-**🌐 Production URL**: https://currency-swap-form-blqtsyvy0-longtran1810s-projects.vercel.app
+**🌐 Production URL**: https://currency-swap-form-red.vercel.app/
 
 ### Option 1: Vercel (Recommended)
 

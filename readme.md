@@ -41,7 +41,7 @@ This challenge consists of three separate problems that cover:
 
 **Tech Stack**: Vanilla JavaScript, HTML5, CSS3, Vite, Switcheo API
 
-**Live Demo**: [Currency Swap Application](https://currency-swap-form-blqtsyvy0-longtran1810s-projects.vercel.app)
+**Live Demo**: [Currency Swap Application](https://currency-swap-form-red.vercel.app/)
 
 **Key Learning**: Full-stack development, API integration, modern web design, deployment strategies.
 
